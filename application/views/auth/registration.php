@@ -121,6 +121,7 @@
                                         <option value="">Pilih . . .</option>
                                         <option value="1">Manajer</option>
                                         <option value="2">Admin</option>
+                                        <option value="3">Ceo</option>
                                     </select>
                                     <small class="text-danger" style="font-size: 10px;"><?= form_error('role') ?></small>
                                 </div>

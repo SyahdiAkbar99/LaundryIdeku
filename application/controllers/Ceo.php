@@ -1,17 +1,17 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
 
-class Manajer extends CI_Controller
+class Ceo extends CI_Controller
 {
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('manajer/Omzet_data_model', 'omzet_model');
-        $this->load->model('manajer/Data_pegawai_model', 'data_pegawai');
-        $this->load->model('manajer/Manajemen_laundry_model', 'manajemen_laundry');
-        $this->load->model('manajer/Stok_barang_model', 'stok_barang');
-        $this->load->model('manajer/Riwayat_pemesanan_model', 'riwayat_pemesanan');
-        $this->load->model('manajer/Gaji_pegawai_model', 'gaji_pegawai');
+        $this->load->model('ceo/Omzet_data_model', 'omzet_model');
+        $this->load->model('ceo/Data_pegawai_model', 'data_pegawai');
+        $this->load->model('ceo/Manajemen_laundry_model', 'manajemen_laundry');
+        $this->load->model('ceo/Stok_barang_model', 'stok_barang');
+        $this->load->model('ceo/Riwayat_pemesanan_model', 'riwayat_pemesanan');
+        $this->load->model('ceo/Gaji_pegawai_model', 'gaji_pegawai');
         // is_logged_in();
     }
 
@@ -19,7 +19,7 @@ class Manajer extends CI_Controller
     //########################################################### INDEX MANAJER AREA ONLY ###########################################################
     public function index()
     {
-        $data['title'] = "Dashboard Manajer";
+        $data['title'] = "Dashboard CEO";
         $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
 
         $id_entitas = $this->session->userdata('id_entitas');
@@ -32,7 +32,7 @@ class Manajer extends CI_Controller
         $this->load->view('templates/header', $data);
         $this->load->view('templates/navbar', $data);
         $this->load->view('templates/sidebar', $data);
-        $this->load->view('manajer/index', $data);
+        $this->load->view('ceo/index', $data);
         $this->load->view('templates/footer');
     }
     //########################################################### INDEX MANAJER AREA ONLY ###########################################################
@@ -58,7 +58,7 @@ class Manajer extends CI_Controller
             $this->load->view('templates/header', $data);
             $this->load->view('templates/navbar', $data);
             $this->load->view('templates/sidebar', $data);
-            $this->load->view('manajer/data_pegawai', $data);
+            $this->load->view('ceo/data_pegawai', $data);
             $this->load->view('templates/footer');
         } else {
             $data = [
@@ -79,46 +79,89 @@ class Manajer extends CI_Controller
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </div>');
-                redirect('manajer/data_pegawai');
+                redirect('ceo/data_pegawai');
             } else {
                 $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Absensi Pegawai Failure updated :( !
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </div>');
-                redirect('manajer/data_pegawai');
+                redirect('ceo/data_pegawai');
             }
         }
     }
 
 
     //########################################################### UPDATE AREA ONLY ###########################################################
+    public function editIndex($id = null)
+    {
+        $where = array('id_pemesanan' => $id);
+        $data['editDataPemesanan'] = $this->data_pemesanan->editDataPemesanan($where, 'data_pemesanan')->result();
 
+        $data['title'] = "Edit Pemesanan";
+        $data['user'] = $this->db->get_where('user', ['email' => $this->session->userdata('email')])->row_array();
+
+        $data['title'] = "Edit Pemesanan";
+        $this->load->view('templates/header', $data);
+        $this->load->view('templates/navbar', $data);
+        $this->load->view('templates/sidebar', $data);
+        $this->load->view('admin/edit/edit_index', $data);
+        $this->load->view('templates/footer');
+    }
+    public function updateIndex()
+    {
+        $data = [
+            'no_pemesanan' => htmlspecialchars($this->input->post('no_pemesanan')),
+            'nama_customer' => htmlspecialchars($this->input->post('nama_customer')),
+            'nama_kasir' => htmlspecialchars($this->input->post('nama_kasir')),
+            'jenis_cucian' => htmlspecialchars($this->input->post('jenis_cucian')),
+            'paket_cucian' => htmlspecialchars($this->input->post('paket_cucian')),
+            'berat_cucian' => htmlspecialchars($this->input->post('berat_cucian')),
+            'parfum_cucian' => htmlspecialchars($this->input->post('parfum_cucian')),
+            'waktu_pemesanan' => htmlspecialchars($this->input->post('waktu_pemesanan')),
+            'tanggal_pemesanan' => htmlspecialchars($this->input->post('tanggal_pemesanan')),
+            'no_telp_customer' => htmlspecialchars($this->input->post('no_telp_customer')),
+            'status' => htmlspecialchars($this->input->post('status')),
+            'total_pemesanan' => htmlspecialchars($this->input->post('total_pemesanan')),
+            'active' => 1,
+            'id_user' => $this->session->userdata('id_entitas'),
+        ];
+        $where = array(
+            'id_pemesanan' => $this->input->post('id_pemesanan'),
+        );
+        $this->data_pemesanan->updateDataPemesanan($where, $data, 'data_pemesanan');
+        $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Update Data Success !
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>');
+        redirect('admin');
+    }
     //########################################################### UPDATE AREA ONLY ###########################################################
 
 
     public function changeActiveAbsen()
     {
-        $id = $this->input->post('id_absen');
-        $active = $this->input->post('active');
+        $id = $this->input->post('id_entitas');
+        $active = $this->input->post('is_active');
 
-        $this->db->set('active', $active);
-        $this->db->where('id_absen', $id);
-        $result = $this->db->update('absensi_pegawai');
+        $this->db->set('is_active', $active);
+        $this->db->where('id_entitas', $id);
+        $result = $this->db->update('user');
         if ($result) {
-            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Data Deleted Sucessfully
+            $this->session->set_flashdata('message', '<div class="alert alert-success" role="alert">Data Change Sucessfully
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>');
-            redirect('manajer/data_pegawai');
+            redirect('ceo/data_pegawai');
         } else {
-            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Data Deleted Failure
+            $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Data Changae Failure
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>');
-            redirect('manajer/data_pegawai');
+            redirect('ceo/data_pegawai');
         }
     }
     //########################################################### DATA PEGAWAI AREA ONLY ###########################################################
@@ -141,7 +184,7 @@ class Manajer extends CI_Controller
         $this->load->view('templates/header', $data);
         $this->load->view('templates/navbar', $data);
         $this->load->view('templates/sidebar', $data);
-        $this->load->view('manajer/monitor_laundry', $data);
+        $this->load->view('ceo/monitor_laundry', $data);
         $this->load->view('templates/footer');
     }
     //########################################################### MONITOR LAUNDRY AREA ONLY ###########################################################
@@ -162,7 +205,7 @@ class Manajer extends CI_Controller
         $this->load->view('templates/header', $data);
         $this->load->view('templates/navbar', $data);
         $this->load->view('templates/sidebar', $data);
-        $this->load->view('manajer/stok_barang', $data);
+        $this->load->view('ceo/stok_barang', $data);
         $this->load->view('templates/footer');
     }
     //########################################################### STOK BARANG AREA ONLY ###########################################################
@@ -183,7 +226,7 @@ class Manajer extends CI_Controller
         $this->load->view('templates/header', $data);
         $this->load->view('templates/navbar', $data);
         $this->load->view('templates/sidebar', $data);
-        $this->load->view('manajer/riwayat_pemesanan', $data);
+        $this->load->view('ceo/riwayat_pemesanan', $data);
         $this->load->view('templates/footer');
     }
     //########################################################### RIWAYAT PEMESANAN AREA ONLY ###########################################################
@@ -211,7 +254,7 @@ class Manajer extends CI_Controller
             $this->load->view('templates/header', $data);
             $this->load->view('templates/navbar', $data);
             $this->load->view('templates/sidebar', $data);
-            $this->load->view('manajer/gaji_pegawai', $data);
+            $this->load->view('ceo/gaji_pegawai', $data);
             $this->load->view('templates/footer');
         } else {
             $data = [
@@ -230,14 +273,14 @@ class Manajer extends CI_Controller
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>');
-                redirect('manajer/gaji_pegawai');
+                redirect('ceo/gaji_pegawai');
             } else {
                 $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Gaji Pegawai Failure Added :( !
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>');
-                redirect('manajer/gaji_pegawai');
+                redirect('ceo/gaji_pegawai');
             }
         }
     }
@@ -285,14 +328,14 @@ class Manajer extends CI_Controller
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </div>');
-                redirect('manajer/gaji_pegawai');
+                redirect('ceo/gaji_pegawai');
             } else {
                 $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Gaji Pegawai Failure updated :( !
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
                 </div>');
-                redirect('manajer/gaji_pegawai');
+                redirect('ceo/gaji_pegawai');
             }
         }
     }
@@ -311,14 +354,14 @@ class Manajer extends CI_Controller
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>');
-            redirect('manajer/gaji_pegawai');
+            redirect('ceo/gaji_pegawai');
         } else {
             $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Data Deleted Failure
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>');
-            redirect('manajer/gaji_pegawai');
+            redirect('ceo/gaji_pegawai');
         }
     }
     //########################################################### GAJI PEGAWAI AREA ONLY ###########################################################
@@ -335,7 +378,7 @@ class Manajer extends CI_Controller
         $this->load->view('templates/header', $data);
         $this->load->view('templates/navbar', $data);
         $this->load->view('templates/sidebar', $data);
-        $this->load->view('manajer/my_profile', $data);
+        $this->load->view('ceo/my_profile', $data);
         $this->load->view('templates/footer');
     }
     public function editProfile()
@@ -351,7 +394,7 @@ class Manajer extends CI_Controller
             $this->load->view('templates/header', $data);
             $this->load->view('templates/navbar', $data);
             $this->load->view('templates/sidebar', $data);
-            $this->load->view('manajer/edit_profile', $data);
+            $this->load->view('ceo/edit_profile', $data);
             $this->load->view('templates/footer');
         } else {
             $data = [
@@ -395,7 +438,7 @@ class Manajer extends CI_Controller
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>');
-            redirect('manajer/my_profile');
+            redirect('ceo/my_profile');
         }
     }
     public function changePassword()
@@ -411,7 +454,7 @@ class Manajer extends CI_Controller
             $this->load->view('templates/header', $data);
             $this->load->view('templates/navbar', $data);
             $this->load->view('templates/sidebar', $data);
-            $this->load->view('manajer/change_password', $data);
+            $this->load->view('ceo/change_password', $data);
             $this->load->view('templates/footer');
         } else {
             $current_password = $this->input->post('current_password');
@@ -422,7 +465,7 @@ class Manajer extends CI_Controller
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>');
-                redirect('manajer/changePassword');
+                redirect('ceo/changePassword');
             } else {
                 if ($current_password == $new_password) {
                     $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert"> New Password cant be same with Current Password ! 
@@ -430,7 +473,7 @@ class Manajer extends CI_Controller
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>');
-                    redirect('manajer/changePassword');
+                    redirect('ceo/changePassword');
                 } else {
                     //password bener
                     $password_hash = password_hash($new_password, PASSWORD_DEFAULT);
@@ -442,7 +485,7 @@ class Manajer extends CI_Controller
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>');
-                    redirect('manajer/changePassword');
+                    redirect('ceo/changePassword');
                 }
             }
         }

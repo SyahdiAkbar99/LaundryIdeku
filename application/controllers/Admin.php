@@ -10,7 +10,7 @@ class Admin extends CI_Controller
         $this->load->model('admin/Absensi_pegawai_model', 'absensi_pegawai');
         $this->load->model('admin/Stok_barang_model', 'stok_barang');
         $this->load->model('admin/Ongkos_model', 'ongkos_model');
-        is_logged_in();
+        // is_logged_in();
     }
 
 

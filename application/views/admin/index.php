@@ -38,6 +38,7 @@
                             <th>Edit</th>
                             <th>Hapus</th>
                             <th>Cetak</th>
+                            <th>Hubungi</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -69,6 +70,9 @@
                                     <td style="text-align:center;">
                                         <a href="<?= base_url('admin/cetakStruk/') . $dp['id_pemesanan']; ?>" class="btn btn-success" role="buttton" target="_blank"><i class="fa fa-print"></i></a>
                                         <!-- <a href="#" style="border-radius:10px;" class="btn btn-info" role="button" target="_blank">Print Preview</a> -->
+                                    </td>
+                                    <td style="text-align:center;">
+                                        <a href="https://api.whatsapp.com/send?phone=<?php echo $dp['no_telp_customer']; ?>&text=Assalamu'alaikum.. Wr.. Wb%20Laundrinya%20udh%20Selsai%20udh%20bisa%20di%20ambil%20dengan%20harga%20<?php echo $dp['total_pemesanan']; ?>" class="btn btn-success" role="buttton" target="_blank"><img src="<?= base_url('assets/images/whatsapp.png'); ?>" alt=""></a>
                                     </td>
                                 </tr>
                                 <?php $i++; ?>

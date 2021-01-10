@@ -11,14 +11,16 @@ class Auth extends CI_Controller
 
     public function index()
     {
-        if ($this->session->userdata('email')) {
-            //astagfirullah ternyata bisa digunain pas pakek form 403 Access Forbidden kodingan kek gini :(
-            if ($this->session->userdata('role_id', 1)) {
-                redirect('manajer');
-            } else {
-                redirect('admin');
-            }
-        }
+        // if ($this->session->userdata('email')) {
+        //     //astagfirullah ternyata bisa digunain pas pakek form 403 Access Forbidden kodingan kek gini :(
+        //     if ($this->session->userdata('role_id', 1)) {
+        //         redirect('manajer');
+        //     } elseif($this->session->userdata('role_id', 2)) {
+        //         redirect('admin');
+        //     }else{
+        //         redirect('ceo');
+        //     }
+        // }
         $this->form_validation->set_rules('email', 'Email', 'trim|required|valid_email');
 
         $this->form_validation->set_rules('password', 'Password', 'trim|required');
@@ -57,8 +59,10 @@ class Auth extends CI_Controller
                     $this->session->set_userdata($data);
                     if ($user['role_id'] == 1) {
                         redirect('manajer');
-                    } else {
+                    } elseif ($user['role_id'] == 2) {
                         redirect('admin');
+                    } else {
+                        redirect('ceo');
                     }
                 } else {
                     $this->session->set_flashdata('message', '<div class="alert alert-danger" role="alert">Wrong password ! 
@@ -88,14 +92,16 @@ class Auth extends CI_Controller
 
     public function registration()
     {
-        if ($this->session->userdata('email')) {
-            //astagfirullah ternyata bisa digunain pas pakek form 403 Access Forbidden kodingan kek gini :(
-            if ($this->session->userdata('role_id', 1)) {
-                redirect('manajer');
-            } else {
-                redirect('admin');
-            }
-        }
+        // if ($this->session->userdata('email')) {
+        //     //astagfirullah ternyata bisa digunain pas pakek form 403 Access Forbidden kodingan kek gini :(
+        //     if ($this->session->userdata('role_id', 1)) {
+        //         redirect('manajer');
+        //     } elseif ($this->session->userdata('role_id', 2)) {
+        //         redirect('admin');
+        //     } else {
+        //         redirect('ceo');
+        //     }
+        // }
 
         $this->form_validation->set_rules('name', 'Name', 'required|trim');
 
@@ -261,12 +267,12 @@ class Auth extends CI_Controller
         redirect('auth');
     }
 
-    public function blocked()
-    {
-        echo "<script>
-        alert('Access Denied, Please dont do anything and make it risk !');
-        </script>";
-    }
+    // public function blocked()
+    // {
+    //     echo "<script>
+    //     alert('Access Denied, Please dont do anything and make it risk !');
+    //     </script>";
+    // }
 
 
     public function forgotPassword()
